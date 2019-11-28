@@ -108,7 +108,7 @@
         form.action = "getData";
         form.method = 'GET';
 
-        form.innerHTML = '<input name="id"  value="'+ v_id+'">';
+        form.innerHTML = '<input name="id" style="display:none"  value="'+ v_id+'">';
         document.body.append(form);
         form.submit();
     }

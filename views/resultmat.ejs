@@ -132,11 +132,8 @@
         data.splice(0, data.length);
         xhr.onload = function() {
             let J_response = JSON.parse(this.responseText);
-            console.log("J_response RenderMaterial " + JSON.stringify(J_response));
-            
-
+          //  console.log("J_response RenderMaterial " + JSON.stringify(J_response));
             for (var i = 0; i < J_response.length; i++) {
-                //console.log('J_response[i].idw=' + J_response[i].idw)
                 MatTable.methods.addMat({
                     id: J_response[i].id,
                     rown: J_response[i].rown,

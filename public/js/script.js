@@ -46,15 +46,12 @@ const EmpTable = {
                     switch (self.numClicks) { 
                         case 1:
                             self.msg = 'One click';
-                            //   console.log('one  =' + JSON.stringify(selected_row.id) + ' self.numClicks = ' + self.numClicks+ 'msg='+self.msg);
                             break;
                         case 2:
                             self.msg = 'Double click';
-                            //  console.log('double  =' + JSON.stringify(selected_row.id) + ' self.numClicks = ' + self.numClicks + 'msg='+self.msg);
                             break;
                         default:
                             self.msg = 'default click';
-                            //      console.log('default =' + JSON.stringify(selected_row.id));
                             GetMatFromRow(selected_row.id);
                     }
                     self.numClicks = 0; 
