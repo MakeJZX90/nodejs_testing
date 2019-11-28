@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" class="section">
+
+<head>
+    <meta charset="UTF-8">
+    <title>материальные ценности </title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' href='../css/buefy.min.css'>
+    <link rel='stylesheet' href='https://cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css'>
+    <link rel='stylesheet' href='../css/all.css'>
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src='../js/vue.min.js'></script>
+    <script src='../js/buefy.min.js'></script>
+    <script src='../js/axios.min.js'></script>
+    <script src='../js/lodash.min.js'></script>
+    <script src='../js/cleave.min.js'></script>
+    <script src='../js/Sortable.min.js'></script>
+    <script src='../js/vee-validate.min.js'></script>
+    <script src='../js/inderscore.min.js'></script>
+    <script type="text/javascript">
+        var summ_price = 0;
+    </script>
+</head>
+
+<body oncontextmenu="return false;">
+    <br>
+    <br>
+    <br>
+    <div id="appmat" class="container">
+        <div class="disp">
+            <ul style="display:none">
+                <div id="id_material">
+                    <%=id%>
+                </div>
+                <br>
+            </ul>
+            <ul>
+                <h4>Фамилия :
+                    <%=surname%>
+                </h4>
+                <br>
+            </ul>
+            <ul>
+                <h4>Имя :
+                    <%=name%>
+                </h4>
+                <br>
+            </ul>
+            <ul>
+                <h4>Отчество :
+                    <%=pattern%>
+                </h4>
+                <br>
+            </ul>
+        </div>
+        <div class="disp">
+            <h4>Список выданных материальных ценностей</h4>
+        </div>
+        <section>
+            <b-table id="id" :data="data" :paginated="isPaginated" :per-page="perPage" :current-page.sync="currentPage" :pagination-simple="isPaginationSimple" :pagination-position="paginationPosition" :default-sort-direction="defaultSortDirection" :sort-icon="sortIcon" :sort-icon-size="sortIconSize" default-sort="id" aria-next-label="Next page" aria-previous-label="Previous page" aria-page-label="Page" aria-current-label="Current page" :selected.sync="selected" @click="ClickRow(selected)" selectable>
+                <template slot-scope="props">
+                    <b-table-column field="id" label="id" width="90" sortable :visible="false">
+                        {{ props.row.id }}
+                    </b-table-column>
+                    <b-table-column field="rown" label="№ п/п" width="90" sortable>
+                        {{ props.row.rown }}
+                    </b-table-column>
+                    <b-table-column field="material" label="название" width="250" sortable>
+                        {{ props.row.material }}
+                    </b-table-column>
+                    <b-table-column field="price" label="стоимость" width="150" sortable>
+                        {{ props.row.price }}
+                    </b-table-column>
+                    <!--  <b-table-column custom-key="actions" width="220">
+                       <b-button @click=""> Edit </b-button>
+                       <b-button @click=""> Delete </b-button>
+                   </b-table-column> -->
+                </template>
+                <template slot="footer" v-if="!isCustom">
+
+                </template>
+                <template slot="footer" v-else>
+                    <th class="is-hidden-mobile">
+                        <div class="has-text-left"> Итого </div>
+                    </th>
+                    <th class="is-hidden-mobile">
+                        <div class="centered">  </div>
+                    </th>
+                    <th class="is-hidden-mobile" >
+                        <div class="has-text-left"> {{ summ_price }} </div>
+                    </th>
+                </template>
+            </b-table>
+            <span id="hidden_2" style="display:none">{{ selected }}</span>
+        </section>
+    </div>
+    <div id="editmat" class="container">
+        <section>
+            <button class="button is-primary is-medium" @click="DB_oper(updarr)">
+                Сохранить
+            </button>
+            <button class="button is-primary is-medium" @click="location.href = '/'">
+                Отмена
+            </button>
+            <button class="button is-primary is-medium" @click="AddDataModel(1,  id_material, 0, '', ''); isComponentModalActive = true; ">
+                Добавить
+            </button>
+            <button class="button is-primary is-medium" @click="AddDataModel(2,  selected_row.id, selected_row.rown, selected_row.material, selected_row.price); isComponentModalActive = true; ">
+                Изменить
+            </button>
+            <button class="button is-primary is-medium" @click="AddDataModel(3,  selected_row.id, selected_row.rown, selected_row.material, selected_row.price); isComponentModalActive = true; ">
+                Удалить
+            </button>
+            <b-modal :active.sync="isComponentModalActive" has-modal-card trap-focus aria-role="dialog" aria-modal>
+                <modal-form v-bind="formProps"></modal-form>
+            </b-modal>
+        </section>
+    </div>
+    <script>
+    var maxrow = 0;
+    var completed = false;
+
+    function RenderMaterial(v_id) {
+        if (typeof jQuery == 'undefined') {
+            console.log('jquery disabled')
+        }
+        let request = JSON.stringify({ idw: v_id });
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'req_getmat', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        maxrow = 0;
+        data.splice(0, data.length);
+        xhr.onload = function() {
+            let J_response = JSON.parse(this.responseText);
+            console.log("J_response RenderMaterial " + JSON.stringify(J_response));
+            
+
+            for (var i = 0; i < J_response.length; i++) {
+                //console.log('J_response[i].idw=' + J_response[i].idw)
+                MatTable.methods.addMat({
+                    id: J_response[i].id,
+                    rown: J_response[i].rown,
+                    material: J_response[i].material,
+                    price: J_response[i].price
+                });
+                if (J_response[i].rown > maxrow) maxrow = J_response[i].rown;
+            }
+            CalcSumm();
+            updarr = [];
+        };
+        xhr.send(request);
+    }
+
+    var data = [
+        { id: 1, rown: 0, material: "Тест", price: 1234 }
+    ];
+
+    const MatTable = {
+        data() {
+            return {
+                data,
+                isPaginated: true,
+                selected: data[0],
+                gridColumns: ['id', 'rown', 'material', 'price'],
+                isPaginationSimple: false,
+                paginationPosition: 'bottom',
+                defaultSortDirection: 'asc',
+                sortIcon: 'arrow-up',
+                sortIconSize: 'is-small',
+                currentPage: 1,
+                editable: true,
+                perPage: 10,
+                numClicks: 0,
+                msg: "",
+                isCustom: true
+            };
+
+        },
+        methods: {
+            "addMat": function addMat(Json) {
+                data.push(Json);
+                selected = null;
+            },
+            "delMat": function(Json) {
+                let found = _.findWhere(data, Json);
+                if (found !== undefined) {
+                    console.log('deleted ')
+                    data.splice(data.indexOf(found), 1);
+                } else {
+                    console.log('not found ' + JSON.stringify(Json))
+                }
+                selected = null;
+            },
+            "updMat": function(rown, Json) {
+                // let found = _.findWhere(data, Json);
+                data.forEach(function(item) {
+                    if (item.rown == rown.toString()) {
+                        data[data.indexOf(item)].material = Json.material;
+                        data[data.indexOf(item)].price = Json.price;
+                    }
+                })
+                selected = null;
+            },
+            "ClickRow": function ClickRow(row) {
+                setTimeout(function() {
+                    console.log('ClickRow =' + JSON.stringify(JSON.parse($('#hidden_2').text())));
+                    selected_row = JSON.parse($('#hidden_2').text());
+
+                }, 300);
+            }
+        }
+    };
+
+    var selected_row;
+    const appmat = new Vue(MatTable);
+    appmat.$mount('#appmat');
+    var id_material = JSON.parse($('#id_material').text())
+    RenderMaterial(id_material)
+    
+    function CalcSumm(){
+        summ_price = 0;
+        data.forEach(function(item) {
+            summ_price = +summ_price + +item.price;
+        })
+    }
+
+    function DB_oper(v_updarr) {
+        let request = {};
+        updarr = [];
+        request =  JSON.stringify({"data" :v_updarr}) ;  
+        console.log('request.data=' +  JSON.stringify(request)); 
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'DB_oper', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onload = function() {
+              console.log(this.responseText);
+              RenderMaterial(id_material)
+        };
+        xhr.send(request);
+    }
+
+    </script>
+    <script src='../js/editmat.js'></script>
+</body>
+
+</html>

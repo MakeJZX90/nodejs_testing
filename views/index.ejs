@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" class="section">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Тестирование сервера
+        <%= title %>
+    </title>
+    <!--  <link rel="stylesheet" href="../css/style.css"> -->
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' href='../css/buefy.min.css'>
+    <link rel='stylesheet' href='https://cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css'>
+    <link rel='stylesheet' href='../css/all.css'>
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src='../js/vue.min.js'></script>
+    <script src='../js/buefy.min.js'></script>
+    <script src='../js/axios.min.js'></script>
+    <script src='../js/lodash.min.js'></script>
+    <script src='../js/cleave.min.js'></script>
+    <script src='../js/Sortable.min.js'></script>
+    <script src='../js/vee-validate.min.js'></script>
+    <script type="text/javascript">
+    </script>
+    <style type="text/css">
+    .center {
+        padding: 30px;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        -ms-transform: translateX(-50%) translateY(-50%);
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+    </style>
+    <!--     <style>
+
+</style> -->
+</head>
+
+<body oncontextmenu="return false;">
+    <br>
+    <br>
+    <br>
+    <div class="center">
+        <h4>Список сотрудников</h4>
+    </div>
+    <div id="app" class="container">
+        <section>
+            <b-table id="id" :data="data" :paginated="isPaginated" :per-page="perPage" :current-page.sync="currentPage" :pagination-simple="isPaginationSimple" :pagination-position="paginationPosition" :default-sort-direction="defaultSortDirection" :sort-icon="sortIcon" :sort-icon-size="sortIconSize" default-sort="id" aria-next-label="Next page" aria-previous-label="Previous page" aria-page-label="Page" aria-current-label="Current page" :selected.sync="selected" @click="ClickRow(selected)" focusable selectable>
+                <template slot-scope="props">
+                    <b-table-column field="id" label="ID" width="40" sortable :visible="false">
+                        {{ props.row.id }}
+                    </b-table-column>
+                    <b-table-column field="name" label="ФИО" sortable>
+                        {{ props.row.name }}
+                    </b-table-column>
+                    <b-table-column field="quantity" label="Кол-во" sortable>
+                        {{ props.row.quantity }}
+                    </b-table-column>
+                    <b-table-column field="sum" label="Общая стоимость" sortable>
+                        {{ props.row.sum}}
+                    </b-table-column>
+                </template>
+            </b-table>
+            <span id="hidden_1" style="display:none">{{ selected }}</span>
+        </section>
+    </div>
+    <div id="user" class="container">
+        <section>
+            <button class="button is-primary is-medium" @click="isComponentModalActive = true">
+                Добавить
+            </button>
+            <b-modal :active.sync="isComponentModalActive" has-modal-card trap-focus aria-role="dialog" aria-modal>
+                <modal-form v-bind="formProps"></modal-form>
+            </b-modal>
+        </section>
+    </div>
+    <div class="foot" style="display:none">
+        <textarea rows="20" cols="100" name="T_answer" id="T_answer"></textarea>
+    </div>
+    <script type="text/javascript" src="../js/script.js"></script>
+    <script>
+    function RenderTable() {
+        let request = new XMLHttpRequest();
+        request.open("POST", "/" + 'req_getEmp', true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.addEventListener("load", function() {
+            document.getElementById("T_answer").value += "received Data " + request.response + "\n";
+          //  console.log("received Data " + request.response);
+            let J_response = JSON.parse(request.response);
+            data.splice(0, data.length);
+            for (var i = 0; i < J_response.length; i++) {
+                EmpTable.methods.addRow({
+                    id: J_response[i].id,
+                    name: J_response[i].name,
+                    quantity: J_response[i].countmat,
+                    sum: J_response[i].summat
+                });
+            }
+        });
+        request.send(JSON.stringify({}));
+    }
+    RenderTable();
+
+    function GetMatFromRow(v_id) {
+      //  window.location.replace("/getData?id="+ v_id);
+        let form = document.createElement('form');
+        form.action = "getData";
+        form.method = 'GET';
+
+        form.innerHTML = '<input name="id"  value="'+ v_id+'">';
+        document.body.append(form);
+        form.submit();
+    }
+
+    function DeleteEmp(v_id) {
+      //  console.log('v_id ' + v_id)
+        let request = JSON.stringify({ id: v_id });
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'DeleteEmp', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onload = function() {
+            console.log(this.responseText);
+        };
+        xhr.send(request);
+        RenderTable();
+    }
+
+    function InsEmp(v_name, v_surname, v_pattern) {
+      //  console.log('v_name ' + v_name)
+        let request = JSON.stringify({ name: v_name, surname: v_surname, pattern: v_pattern });
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'InsertEmp', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onload = function() {
+            console.log(this.responseText);
+        };
+        xhr.send(request);
+        RenderTable();   
+    }
+    </script>
+</body>
+
+</html>

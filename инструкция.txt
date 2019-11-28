@@ -1,0 +1,21 @@
+для запуска сервера нужно выполнить 
+1) npm init
+2) npm install
+3) выполнить скрипты script.sql в базе ms sql server
+4) в файле app-config  изменить настройки подключения на свои добавив новый раздел . например такой    
+if (process.argv[2] == "cit") {
+        cnf = {
+            showlog: false,
+            HttpPort: 8080,
+            path: ""
+        }
+        db_options = {
+            user: 'sa',
+            password: 'sa',
+            server: 'localhost',
+            database: 'testms'
+        };
+    }
+ где "cit" название режима запуска, которое служит переменной среды при запуске
+
+5) запуск node app  cit (вместо cit нужно вставить свое название режима)
