@@ -1,7 +1,7 @@
 {
-  "name": "alseco",
+  "name": "nodejs_testing",
   "version": "1.0.0",
-  "main": "alseco.js",
+  "main": ".nodejs_testing",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,5 +29,13 @@
     ]
   },
   "devDependencies": {},
-  "description": ""
+  "description": "ms_sql - tables - forms",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakeJZX90/nodejs_testing.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MakeJZX90/nodejs_testing/issues"
+  },
+  "homepage": "https://github.com/MakeJZX90/nodejs_testing#readme"
 }
